@@ -30,7 +30,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Flask Todo App</a>
+            <a class="navbar-brand" href="{{ url_for('get_todo') }}">Flask Todo App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -40,7 +40,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     {% set path = request.path %}
                     <li class="nav-item">
-                        <a class="nav-link {% if path == '/add_todo' %} active {% endif %}" aria-current="page" href="{{ url_for('add_todo') }}">Add Todo</a>
+                        <a class="nav-link {% if path == '/add_todo' %} active {% endif %}" aria-current="page" href="{{ url_for('view_add_todo') }}">Add Todo</a>
                     </li>
                 </ul>
             </div>

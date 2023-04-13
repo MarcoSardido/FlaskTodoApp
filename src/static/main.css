@@ -7,3 +7,8 @@
 body {
     background-color: #f1f1ff !important;
 }
+
+main {
+    display: flex;
+    justify-content: center;
+}
