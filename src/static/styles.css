@@ -1,0 +1,97 @@
+.todo-app {
+    width: 30rem;
+    height: 30rem;
+    margin: 40px auto;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.todo {
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.todo input {
+    width: 68%;
+    margin-right: 3px;
+    height: 30px;
+    border: 1px solid #486def;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.todo button {
+    border: none;
+    background: #486def;
+    border-radius: 5px;
+    padding: 7px;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+.todo button:hover {
+    background-color: #fff;
+    color: #486def;
+    cursor: pointer;
+}
+
+.task-list {
+    width: 100%;
+    min-height: 100px;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.task {
+    width: 300px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    
+    border-radius: 5px;
+    box-shadow: #3860eb2b 0px 4px 5px 2px;
+}
+
+.task:nth-child(even) {
+    margin: 12px 0;
+}
+
+.task-title {
+    margin-left: 5px;
+    text-transform: capitalize;
+}
+
+.task a {
+    text-decoration: none;
+}
+
+.check-task {
+    color: green;
+    margin-right: 3px;
+}
+
+.edit-task {
+    color: orange;
+    margin-right: 3px;
+}
+
+.remove-task {
+    color: red;
+}
