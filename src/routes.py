@@ -1,35 +1,71 @@
-from flask import redirect, render_template, request, url_for, flash
-from src import app, db
+from flask import redirect, render_template, request, url_for, flash, jsonify
+import logging
+from src import app, todoCollection
 from .forms import TodoForm
 from datetime import datetime
 
 
 @app.route('/')
-def index():
-    return render_template('todo.html')
+def get_todo():
+    todoArray = []
+
+    try:
+        todos = todoCollection.find().sort('date_created', -1)
+
+        for todo in todos:
+            todoObj = {
+                "_id": str(todo["_id"]),
+                "name": todo["name"],
+                "description": todo["description"],
+                "completed": todo["completed"],
+                "date_created": todo["date_created"].strftime("%b %d %Y %H:%M%S")
+            }
+            todoArray.append(todoObj)
+
+            return render_template('todo.html', todoArray=todoArray)
+    except Exception as ex:
+        logging.error('Error: ', ex)
+        return render_template('todo.html', todoArray=todoArray)
+
+    
+
+    
+
+
+@app.route('/view_add_todo', methods=['GET'])
+def view_add_todo():
+    form = TodoForm()
+    return render_template('add_todo.html', form=form)
+
 
 @app.route('/add_todo', methods=['GET', 'POST'])
 def add_todo():
-    if request.method == 'POST':
-        form = TodoForm(request.form)
-        todo_name = form.name.data
-        todo_description = form.description.data
-        todo_completed = form.completed.data
+    form = TodoForm(request.form)
+    todo_name = form.name.data
+    todo_description = form.description.data
+    todo_completed = form.completed.data
 
-        # Adding data to collection "todo_flask"
-        db.todos.insert_one({
+    # Adding data to collection "todo_flask"
+    try:
+        result = todoCollection.insert_one({
             'name': todo_name,
             'description': todo_description,
             'completed': todo_completed,
-            'date_completed': datetime.utcnow()
+            'date_created': datetime.utcnow()
         })
+        print(f'New task was added! {result}')
         flash('Todo Successfully Added!', 'success')
         return redirect('/')
 
-    else:
-        form = TodoForm()
+    except Exception as ex:
+        logging.error('Error: ', ex)
+        return redirect('/')
+    
 
-    return render_template('add_todo.html', form=form)
+
+
+
+
 
 
 # @app.route('/add_todo', methods=['POST'])
@@ -55,6 +91,8 @@ def add_todo():
 #     form = TodoForm()
 #     return render_template('add_todo.html', form=form)
 
+
+# === Old Todo route codes ===
 
 # @app.route('/add_todo', methods=['POST'])
 # def add_todo():
