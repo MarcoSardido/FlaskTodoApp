@@ -25,12 +25,35 @@ def add_todo():
         })
         flash('Todo Successfully Added!', 'success')
         return redirect('/')
-    
+
     else:
         form = TodoForm()
-        
+
     return render_template('add_todo.html', form=form)
 
+
+# @app.route('/add_todo', methods=['POST'])
+# def add_todo():
+#     form = TodoForm(request.form)
+#     todo_name = form.name.data
+#     todo_description = form.description.data
+#     todo_completed = form.completed.data
+
+#     # Adding data to collection "todo_flask"
+#     db.todos.insert_one({
+#         'name': todo_name,
+#         'description': todo_description,
+#         'completed': todo_completed,
+#         'date_completed': datetime.utcnow()
+#     })
+#     flash('Todo Successfully Added!', 'success')
+#     return redirect('/')
+
+
+# @app.route('/get_todos', methods=['GET'])
+# def get_todos():
+#     form = TodoForm()
+#     return render_template('add_todo.html', form=form)
 
 
 # @app.route('/add_todo', methods=['POST'])
