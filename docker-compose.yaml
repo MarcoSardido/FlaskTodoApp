@@ -15,7 +15,7 @@ services:
         environment:
             PYTHONIOENCODING: 'utf-8'
             TZ: "Asia/Manila"
-        command: ['ping', '127.0.0.1']
+        # command: ['ping', '127.0.0.1']
     mongodb:
         container_name: todo_mongodb
         image: mongo:4.2.0-bionic
