@@ -1,0 +1,15 @@
+*.pyc
+*.DS_Store
+__pycache__
+.webassets-cache
+compressed
+reference.js
+*.egg-info
+build/
+dist/
+.eggs
+celerybeat-schedule.db
+celerybeat.pid
+.coverage
+htmlcov
+docs/_build
