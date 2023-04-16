@@ -1,0 +1,57 @@
+class Domain(Model):
+    TEMPLATE = {
+        'nases': [],
+        'scripts': {},
+        'max_concurrent_logins': 1
+    }
+
+    class Meta:
+        # Here, we specify the database and collection names.
+        # A connection to your DB is automatically created.
+        host = DB_CONFIG['aaa']['location']
+        database = DB_CONFIG['aaa']['name']
+        username = DB_CONFIG['aaa']['username']
+        password = DB_CONFIG['aaa']['password']
+        collection = "domains"
+
+        indices = (
+            Index('domain'),
+        )
+
+    @classmethod
+    @mongo.update
+    # Required:
+    # domain - Domain name
+    # nases
+    #
+    def create(cls, domain_config):
+        if 'domain' not in domain_config:
+            raise KeyError('Domain parameter missing')
+
+        domain_name = domain_config['domain']
+
+        if not valid_domain_name.match(domain_name):
+            raise ValueError('Invalid domain name format: %s' % (domain_name))
+
+        if Domain.getDomainFromName(domain_name) is not None:
+            raise ValueError('Domain %s already exists' % (domain_name))
+
+        if 'nases' not in domain_config:
+            raise KeyError('Nases parameter missing')
+
+        if domain_config['nases'] == []:
+            raise ValueError('Nasses parameter empty')
+
+        available_nases = [nas['_id'] for nas in NAS.getNASes({}, {'_id': True})]
+        domain_config['nases'] = [ObjectId(nas_id) for nas_id in domain_config['nases']]
+        nas_difference = set(domain_config['nases']) - set(available_nases)
+        if len(nas_difference) > 0:
+            raise ValueError('Invalid NAS id(s): %s', ', '.join(nas_difference))
+
+        domain_config['api_key'] = generate_api_key()
+
+        config = dict(Domain.TEMPLATE)
+        merge_dict(config, domain_config)
+        domain = cls(config).save()
+        UserProfileField.createDefaultsForDomain(domain._id)
+        return domain

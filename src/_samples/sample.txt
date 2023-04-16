@@ -1,0 +1,38 @@
+Record creation
+          try:
+          domain = Domain.create({...})
+     except ValueError as ex:
+          log.warning(…)
+     except Exception as ex:
+          log.error(…)
+          return jsonify({'error': ex.message})
+
+
+Update
+    domain_name = 'entropy.com'
+    domain = Domain.getDomainByName('entropy.com')
+    if domain is None:
+        log.error('Domain %s not found' % (domain_name))
+        return jsonify({'error': 'Domain %s not found' % (domain_name)})
+    try:
+        domain = Domain.update({...})
+    except ValueError as ex:
+        log.warning(…)
+    except Exception as ex:
+        log.error(…)
+        return jsonify({'error': ex.message})
+
+
+Record removal
+    domain_name = 'entropy.com'
+    domain = Domain.getDomainByName('entropy.com')
+    if domain is None:
+        log.error('Domain %s not found' % (domain_name))
+        return jsonify({'error': 'Domain %s not found' % (domain_name)})
+    try:
+        domain = domain.remove()
+    except ValueError as ex:
+        log.warning(…)
+    except Exception as ex:
+        log.error(…)
+        return jsonify({'error': ex.message})
