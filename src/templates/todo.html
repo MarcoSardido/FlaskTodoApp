@@ -1,29 +1,35 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h2 class="text-center my-2">Todo App</h2>
-{% if (todoArray is defined) and todoArray %}
-{% for todo in todoArray %}
-<div class="card p-1 m-3">
-    <div class="card-body">
-        {% if todo.completed == "True" %}
-        <h5 class="card-title"><del>{{todo.name}}</del></h5>
-        {% else %}
-        <h5 class="card-title">{{todo.name}}</h5>
-        {% endif %}
+    <h2 class="text-center my-2">Todo App</h2>
+    {% if (todoArray is defined) and todoArray %}
+        {% for todo in todoArray %}
+            <div class="card p-1 m-3">
+                <div class="card-body">
+                    {% if todo.completed == "True" %}
+                    <h5 class="card-title"><del>{{todo.name}}</del></h5>
+                    {% else %}
+                    <h5 class="card-title">{{todo.name}}</h5>
+                    {% endif %}
 
-        <p class="card-text text-muted">{{ todo.date_created }}</p>
-        <p class="card-text">{{ todo.description }}</p>
-    </div>
-</div>
-{% endfor %}
-{% else %}
-<span class="empty-text">
-    You have no task today! 🎉
-</span>
-{% endif %}
+                    <p class="card-text text-muted">{{ todo.date_created }}</p>
+                    <p class="card-text">{{ todo.description }}</p>
 
-
-
+                    <a href="{{ url_for('view_update_todo', id = todo._id) }}" class="btn btn-warning btn-sm">
+                        Update
+                    </a>
+                    <a href="{{ url_for('delete_todo', id = todo._id) }}" class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="card-body text-center">
+            <h3 class="lead">
+                You have no task today! 🎉
+            </h3>
+        </div>
+    {% endif %}
 
 
 

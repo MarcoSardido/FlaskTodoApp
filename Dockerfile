@@ -25,6 +25,7 @@ RUN python3 -m pip install pip --upgrade
 FROM prereqs AS pip
 COPY ./requirements.txt /
 RUN pip3 install -r requirements.txt --retries 30 --default-timeout=60
+RUN pip3 install git+https://github.com/entropysolution/entropy.git
 
 # BASE
 FROM pip AS development
@@ -41,3 +42,4 @@ CMD gunicorn \
     --graceful-timeout 1 \
     --log-level debug \
     run:app
+
