@@ -1,73 +1,43 @@
-from flask import redirect, render_template, request, url_for, flash, jsonify
-import logging
-from src import app, todoCollection
-from .forms import TodoForm
-from datetime import datetime
+# from flask import redirect, render_template, request, flash, jsonify, url_for
+# import logging
+# from src import app, todoCollection
+# from .forms import TodoForm
+# from datetime import datetime
+# from bson import ObjectId
 
 
-@app.route('/')
-def get_todo():
-    todoArray = []
 
-    try:
-        todos = todoCollection.find().sort('date_created', -1)
-
-        for todo in todos:
-            todoObj = {
-                "_id": str(todo["_id"]),
-                "name": todo["name"],
-                "description": todo["description"],
-                "completed": todo["completed"],
-                "date_created": todo["date_created"].strftime("%b %d %Y %H:%M%S")
-            }
-            todoArray.append(todoObj)
-
-            return render_template('todo.html', todoArray=todoArray)
-    except Exception as ex:
-        logging.error('Error: ', ex)
-        return render_template('todo.html', todoArray=todoArray)
-
+# # ========== Main Page ==========
+# @app.route('/')
+# def get_todo():
+#     todoArray = []
     
+#     try:
+#         todos = todoCollection.find().sort('date_created', -1)
+#     except Exception as ex:
+#         logging.error('Error retrieving todoCollection data: ', ex)
+        
+#     for todo in todos:
+#         todoObj = {
+#             "_id": str(todo["_id"]),
+#             "name": todo["name"],
+#             "description": todo["description"],
+#             "completed": todo["completed"],
+#             "date_created": todo["date_created"].strftime("%b %d %Y %H:%M%S")
+#         }
+#         todoArray.append(todoObj)
 
-    
-
-
-@app.route('/view_add_todo', methods=['GET'])
-def view_add_todo():
-    form = TodoForm()
-    return render_template('add_todo.html', form=form)
-
-
-@app.route('/add_todo', methods=['GET', 'POST'])
-def add_todo():
-    form = TodoForm(request.form)
-    todo_name = form.name.data
-    todo_description = form.description.data
-    todo_completed = form.completed.data
-
-    # Adding data to collection "todo_flask"
-    try:
-        result = todoCollection.insert_one({
-            'name': todo_name,
-            'description': todo_description,
-            'completed': todo_completed,
-            'date_created': datetime.utcnow()
-        })
-        print(f'New task was added! {result}')
-        flash('Todo Successfully Added!', 'success')
-        return redirect('/')
-
-    except Exception as ex:
-        logging.error('Error: ', ex)
-        return redirect('/')
-    
+#     return render_template('todo.html', todoArray=todoArray)
 
 
+# # ========== Add Todo ==========
+# # Route
+# @app.route('/add_todo', methods=['GET'])
+# def view_add_todo():
+#     form = TodoForm()
+#     return render_template('add_todo.html', form=form)
 
-
-
-
-
+# # # Create
 # @app.route('/add_todo', methods=['POST'])
 # def add_todo():
 #     form = TodoForm(request.form)
@@ -75,49 +45,71 @@ def add_todo():
 #     todo_description = form.description.data
 #     todo_completed = form.completed.data
 
-#     # Adding data to collection "todo_flask"
-#     db.todos.insert_one({
-#         'name': todo_name,
-#         'description': todo_description,
-#         'completed': todo_completed,
-#         'date_completed': datetime.utcnow()
-#     })
-#     flash('Todo Successfully Added!', 'success')
-#     return redirect('/')
+#     # Adding data to collection "todo_data"
+#     try:
+#         result = todoCollection.insert_one({
+#             'name': todo_name,
+#             'description': todo_description,
+#             'completed': todo_completed,
+#             'date_created': datetime.utcnow()
+#         })
+#         print(f'New task was added! {result}')
+#         flash('Todo Successfully Added!', 'success')
+#         return redirect('/')
+
+#     except Exception as ex:
+#         logging.error('Error @add_todo: ', ex)
+#         return redirect('/')
+    
 
 
-# @app.route('/get_todos', methods=['GET'])
-# def get_todos():
+# # ========== Update Todo ==========
+# # Route
+# @app.route('/update_todo/<id>', methods=['GET'])
+# def view_update_todo(id):
 #     form = TodoForm()
+#     todo = todoCollection.find_one({"_id": ObjectId(id)})
+#     form.name.data = todo.get("name", None)
+#     form.description.data = todo.get("description", None)
+#     form.completed.data = todo.get("completed", None)
+
 #     return render_template('add_todo.html', form=form)
 
+# # # Update
+# @app.route('/update_todo/<id>', methods=['POST'])
+# def update_todo(id):
+#     form = TodoForm(request.form)
+#     todo_name = form.name.data
+#     todo_description = form.description.data
+#     todo_completed = form.completed.data
 
-# === Old Todo route codes ===
+#     # Updating data to collection "todo_data"
+#     try:
+#         todoCollection.find_one_and_update({"_id": ObjectId(id)}, {
+#             "$set":{
+#                 'name': todo_name,
+#                 'description': todo_description,
+#                 'completed': todo_completed,
+#                 'date_created': datetime.utcnow()
+#             }
+#         })
+#         print(f'Todo ID: {id} was updated!')
+#         flash('Todo Successfully Updated!', 'success')
+#         return redirect('/')
 
-# @app.route('/add_todo', methods=['POST'])
-# def add_todo():
-#     todo = request.form['todo']
-#     todos.append({'task': todo, 'done': False})
-#     return redirect(url_for('todo_page'))
-
-
-# @app.route('/edit_todo/<int:index>', methods=['GET', 'POST'])
-# def edit_todo(index):
-#     todo = todos[index]
-#     if (request.method == 'POST'):
-#         todo['task'] == request.form['todo']
-#         return redirect(url_for('todo_page'))
-#     else:
-#         return render_template('edit.html', todo=todo, index=index)
-
-
-# @app.route('/check_todo/<int:index>')
-# def check_todo(index):
-#     todos[index]['done'] = not todos[index]['done']
-#     return redirect(url_for('todo_page'))
+#     except Exception as ex:
+#         logging.error('Error @update_todo: ', ex)
+#         return redirect('/')
 
 
-# @app.route('/delete_todo/<int:index>')
-# def delete_todo(index):
-#     del todos[index]
-#     return redirect(url_for('todo_page'))
+# # ========== Delete Todo ==========
+
+# @app.route('/delete_todo/<id>')
+# def delete_todo(id):
+#     try:
+#         todoCollection.find_one_and_delete({"_id": ObjectId(id)})
+#         flash('Todo Successfully Deleted!', 'success')
+#         return redirect('/')
+#     except Exception as ex:
+#         logging.error('Error @delete_todo: ', ex)
+
