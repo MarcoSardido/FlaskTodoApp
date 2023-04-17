@@ -1,59 +1,55 @@
 {% extends 'layout.html' %}
 
-    {% block content %}
+{% block content %}
 
-    <link rel="stylesheet" href="{{url_for('static',filename='styles.css')}}">
-
-    <div class="todo-app">
-        <p class="title">todo app</p>
-        <div class="todo">
-            <form autocomplete="off" action="{{ url_for('add_todo') }}" method="post">
-                <input type="text"
-                    role="presentation"
-                    name="todo" 
-                    placeholder="Enter a todo..."
-                >
-                <button>add todo</button>
-            </form>
-        </div>
-        <div class="task-list">
-            {% if (todos is defined) and todos %}
-
-                {% for todo in todos %}
-                <div class="task">
-                    <div>
-                        <a href="{{ url_for('check_todo', index=loop.index0) }}"
-                            class="check-task"
-                        >
-                            {% if todo['done'] %} 
-                                X
-                            {% else %}
-                                ✓
-                            {% endif %}
-                        </a>
-                        <span class="task-title"
-                            {% if todo['done'] %} style="text-decoration: line-through;" {% endif %}
-                        >
-                            {{ todo['task'] }}
-                        </span>
-                    </div>
-                    <div>
-                        
-                        <a href="{{ url_for('edit_todo', index=loop.index0) }}"
-                        class="edit-task"
-                        >Edit</a>
-                        <a href="{{ url_for('delete_todo', index=loop.index0) }}"
-                        class="remove-task"
-                        >Delete</a>
-                    </div>
-                </div>
-                {% endfor%}
-
-                {% else %}
-                <span class="empty-text">
-                    You have no task today! 🎉
-                </span>
-            {% endif %}
-        </div>
+<div class="todo-app">
+    <p class="title">todo app</p>
+    <div class="todo">
+        <form autocomplete="off" method="post">
+            {{ form.csrf_token() }}
+            {{ form.name(class='todo-input') }}
+            {{ form.submit(class='todo-button') }}
+        </form>
     </div>
-    {% endblock %}
+    <div class="task-list">
+        {% if (todoArray is defined) and todoArray %}
+        {% for todo in todoArray %}
+        <div class="task">
+            <div>
+                <span class="task-title">
+                    {{ todo['title'] }}
+                </span>
+            </div>
+            <div class="task-button-group">
+                <div class="task-button check">
+                    <a href="">
+                        <span class="material-icons">
+                            check
+                        </span>
+                    </a>
+                </div>
+                <div class="task-button edit">
+                    <a href="">
+                        <span class="material-icons">
+                            edit_note
+                        </span>
+                    </a>
+                </div>
+                <div class="task-button delete">
+                    <a href="">
+                        <span class="material-icons">
+                            delete
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <span class="empty-text">
+            You have no task today! 🎉
+        </span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

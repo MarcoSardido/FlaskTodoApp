@@ -2,30 +2,31 @@ from src import app
 from flask import redirect, render_template, request, flash
 
 # Forms
-from src.forms import TodoForm
+# from src.forms import TodoForm
 
 # Models
-from src.models.Model_Todo import Todo
+# from src.models.Model_Todo import Todo
 
 
 # ========== Main Page ==========
 @app.route('/')
 def get_todo():
-    todoArray = []
-    
     todo = Todo()
-    todos = todo.getTodoList()
+
+    todoArray = []
+    todos = todo.find({})
 
     for todo in todos:
       todoObj = {
         "_id": str(todo["_id"]),
-        "title": todo["title"],
+        "name": todo["title"],
         "description": todo["description"],
         "completed": todo["completed"],
-        "date_created": todo["created"].strftime("%d/%m/%Y, %H:%M:%S")
+        "date_created": todo["created"].strftime("%b %d %Y %H:%M%S")
       }
       todoArray.append(todoObj)
 
+    # // Not Working
     return render_template('todo.html', todoArray=todoArray)
 
 
@@ -46,7 +47,7 @@ def add_todo():
     todo_description = form.description.data
     todo_completed = form.completed.data
 
-    todo.createTodo({
+    todo.create({
         "title": todo_name,
         "description": todo_description,
         "completed": todo_completed
@@ -61,8 +62,8 @@ def add_todo():
 @app.route('/update_todo/<id>', methods=['GET'])
 def view_update_todo(id):
     todo = Todo()
-    result = todo.getTodo(id)
-
+    result = todo.find_by_id(id)
+    
     form = TodoForm()
     form.name.data = result['title']
     form.description.data = result['description']
@@ -80,12 +81,12 @@ def update_todo(id):
     todo_description = form.description.data
     todo_completed = form.completed.data
 
-    todo.updateTodo(id, {
+    todo.update(id, {
         "title": todo_name,
         "description": todo_description,
         "completed": todo_completed
     })
-
+    
     flash('Todo Successfully Updated!', 'success')
     return redirect('/')
 
@@ -94,7 +95,7 @@ def update_todo(id):
 @app.route('/delete_todo/<id>')
 def delete_todo(id):
     todo = Todo()
-    todo.deleteTodo(id)
+    todo.delete(id)
 
     flash('Todo Successfully Deleted!', 'success')
     return redirect('/')

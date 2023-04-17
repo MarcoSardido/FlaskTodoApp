@@ -6,9 +6,9 @@
             <div class="card p-1 m-3">
                 <div class="card-body">
                     {% if todo.completed == "True" %}
-                    <h5 class="card-title"><del>{{todo.name}}</del></h5>
+                    <h5 class="card-title"><del>{{todo.title}}</del></h5>
                     {% else %}
-                    <h5 class="card-title">{{todo.name}}</h5>
+                    <h5 class="card-title">{{todo.title}}</h5>
                     {% endif %}
 
                     <p class="card-text text-muted">{{ todo.date_created }}</p>

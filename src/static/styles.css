@@ -1,3 +1,7 @@
+.material-icons {
+    font-size: 18px;
+}
+
 .todo-app {
     width: 30rem;
     height: 30rem;
@@ -12,20 +16,20 @@
     border-radius: 10px;
 }
 
-.title {
+.todo-app .title {
     font-size: 25px;
     font-weight: 600;
     text-transform: capitalize;
 }
 
-.todo {
+.todo-app .todo {
     width: 100%;
-    margin: 20px 0;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
 }
 
-.todo input {
+.todo-app .todo .todo-input {
     width: 68%;
     margin-right: 3px;
     height: 30px;
@@ -34,22 +38,23 @@
     padding: 10px;
 }
 
-.todo button {
+.todo-app .todo .todo-button {
     border: none;
     background: #486def;
     border-radius: 5px;
-    padding: 7px;
+    padding: 4px 7px;
     color: #fff;
     text-transform: capitalize;
 }
 
-.todo button:hover {
+.todo-app .todo button:hover {
     background-color: #fff;
     color: #486def;
     cursor: pointer;
+    box-shadow: #3860eb2b 0px 4px 5px 2px;
 }
 
-.task-list {
+.todo-app .task-list {
     width: 100%;
     min-height: 100px;
     overflow-y: auto;
@@ -59,39 +64,80 @@
     align-items: center;
 }
 
-.task {
-    width: 300px;
+.todo-app .task {
+    width: 80%;
     padding: 10px;
+    margin: 4px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     
     border-radius: 5px;
     box-shadow: #3860eb2b 0px 4px 5px 2px;
 }
 
-.task:nth-child(even) {
-    margin: 12px 0;
-}
-
-.task-title {
+.todo-app .task-title {
     margin-left: 5px;
     text-transform: capitalize;
 }
 
-.task a {
+.todo-app .task-button-group {
+    display: flex;
+}
+
+.todo-app .task-button {
+    cursor: pointer;
+    padding: 5px 6px;
+    margin: 0 3px;
+    border-radius: 5px;
+}
+
+.todo-app  .task-button.check:hover {
+    background-color: #fff;
+    box-shadow: #3860eb2b 0px 4px 5px 2px;
+}
+
+.todo-app .task-button.check:hover a {
+    color: #2db178;
+}
+
+.todo-app .task-button.edit:hover {
+    color: #f57b08;
+    background-color: #fff;
+    box-shadow: #3860eb2b 0px 4px 5px 2px;
+}
+
+.todo-app .task-button.edit:hover a {
+    color: #f57b08;
+}
+
+.todo-app .task-button.delete:hover {
+    color: #cc0a00;
+    background-color: #fff;
+    box-shadow: #3860eb2b 0px 4px 5px 2px;
+}
+
+.todo-app .task-button.delete:hover a {
+    color: #cc0a00;
+}
+
+.todo-app .task a {
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
 }
 
-.check-task {
-    color: green;
-    margin-right: 3px;
+.todo-app .check {
+    background-color: #2db178;
 }
 
-.edit-task {
-    color: orange;
-    margin-right: 3px;
+.todo-app .edit {
+    background-color: #f57b08;
 }
 
-.remove-task {
-    color: red;
+.todo-app .delete {
+    background-color: #cc0a00;
 }
+
