@@ -2,7 +2,7 @@
 # from hashlib import sha1
 # from typing import DefaultDict
 from micromongo import Model, Index, fields, validate
-# from . import HOST, DATABASE, USERNAME, PASSWORD, REPLICASET
+from src.config import HOST, DATABASE, USERNAME, PASSWORD
 # from crm.models.group import Group
 from bson.objectid import ObjectId
 from datetime import datetime
@@ -18,11 +18,11 @@ class Todo(Model):
     updated = fields.Date(datetime.now(myTimezone))
 
     class Meta:
+        host = HOST
+        database = DATABASE
+        username = USERNAME
+        password = PASSWORD
         collection = 'todo_data'
-        host = 'mongodb'
-        database = 'todo_data'
-        username = 'mongouser'
-        password = 'mongopassword'
         indices = (
             Index('title'),
             Index('description'),
