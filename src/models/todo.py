@@ -32,30 +32,27 @@ class Todo(Model):
         )
 
     @classmethod
-    def getTodo(cls, id):
+    def get(cls, id):
         found = cls.collection.find_one({'_id': ObjectId(id)})
-
-        if "_id" in found:
-            found["_id"] = str(found["_id"])
-            
+        found["_id"] = str(found["_id"]) #convert ObjectId into string
         return found
 
     @staticmethod
-    def getTodoList(filters=None, projection=None):
+    def getList(filters=None, projection=None):
         return Todo.collection.find(filters, projection)
 
     @classmethod
-    def createTodo(cls, query):
+    def create(cls, query):
         output = cls.collection.insert_one(query)
         return output
 
-    @classmethod
-    def updateTodo(cls, id, newValues):
-        newValues["updated"] = datetime.utcnow()
-        cls.collection.update_one({"_id": ObjectId(id)}, {"$set": newValues})
-        return
     
-    @classmethod
-    def deleteTodo(cls, id):
-        cls.collection.delete_one({"_id": ObjectId(id)})
+    def update(self, newValues):
+        newValues["updated"] = datetime.now(myTimezone)
+        Todo.collection.update_one({"_id": ObjectId(self._id)}, {"$set": newValues})
+        return self, newValues
+    
+    
+    def delete(self):
+        Todo.collection.delete_one({"_id": ObjectId(self._id)})
         return
