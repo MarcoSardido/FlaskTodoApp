@@ -13,6 +13,10 @@ services:
         networks:
             - default
         environment:
+            HOST: 'mongodb'
+            DATABASE: 'todo_data'
+            USERNAME: 'mongouser'
+            PASSWORD: 'mongopassword'
             PYTHONIOENCODING: 'utf-8'
             TZ: "Asia/Manila"
         # command: ['ping', '127.0.0.1']
