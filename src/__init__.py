@@ -1,17 +1,18 @@
 from flask import Flask
+from .config import SECRET_KEY
 # import certifi
 
 # from pymongo import MongoClient
 
-import os
-from dotenv import load_dotenv, find_dotenv
+# import os
+# from dotenv import load_dotenv, find_dotenv
 
 # init app
 app = Flask(__name__)
 
-load_dotenv(find_dotenv())
+# load_dotenv(find_dotenv())
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # setup MongoDB
 
