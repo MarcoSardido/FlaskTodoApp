@@ -37,4 +37,4 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 # todoCollection = myDB['todos']
 
 
-from src.controllers import Controller_Todo
+from src.controllers import todo
