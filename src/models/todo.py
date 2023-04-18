@@ -34,7 +34,6 @@ class Todo(Model):
     @classmethod
     def get(cls, id):
         found = cls.collection.find_one({'_id': ObjectId(id)})
-        found["_id"] = str(found["_id"]) #convert ObjectId into string
         return found
 
     @staticmethod
@@ -55,4 +54,4 @@ class Todo(Model):
     
     def delete(self):
         Todo.collection.delete_one({"_id": ObjectId(self._id)})
-        return
+        return 

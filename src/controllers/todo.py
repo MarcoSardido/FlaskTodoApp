@@ -13,12 +13,12 @@ from src.models.todo import Todo
 # ========== Main Page ==========
 @app.route('/')
 def get_todo():
-    todoArray = []
+    todo_array = []
     todos = Todo().getList()
     for todo in todos:
         todo['date_created'] = todo["created"].strftime("%d/%m/%Y, %H:%M:%S")
-        todoArray.append(todo)
-    return render_template('todo.html', todoArray=todoArray)
+        todo_array.append(todo)
+    return render_template('todo.html', todo_array=todo_array)
 
 
 # ========== Add Page ==========
@@ -69,7 +69,7 @@ def view_update_todo(id):
     except Exception as ex:
         logging.error('error updating todo')
         return jsonify({'error': ex.message})
-    
+
     
 # Update
 @app.route('/update_todo/<id>', methods=['POST'])
@@ -92,7 +92,7 @@ def update_todo(id):
     except Exception as ex:
         logging.error('error creating todo')
         return jsonify({'error': ex.message})
-    
+ 
 
 # ========== Delete Todo ==========
 @app.route('/delete_todo/<id>')
