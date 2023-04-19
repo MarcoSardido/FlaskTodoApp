@@ -16,7 +16,7 @@ def get_todo():
     for todo in todos:
         todo['date_created'] = todo["created"].strftime("%d/%m/%Y, %H:%M:%S")
         todo_array.append(todo)
-    return render_template('todo.html', todo_array=todo_array)
+    return dumps(todo_array), 200
 
 @app.route('/todo', methods=['GET'])
 def view_add_todo():
@@ -25,18 +25,15 @@ def view_add_todo():
 
 @app.route('/todo', methods=['POST'])
 def add_todo():
-    form = TodoForm(request.form)
-    todo_name = form.name.data
-    todo_description = form.description.data
-    todo_completed = form.completed.data
+    data = request.get_json()
+    title, description, completed = data.values()
     try:
         Todo.create({
-        "title": todo_name,
-        "description": todo_description,
-        "completed": todo_completed
+        "title": title,
+        "description": description,
+        "completed": completed
         })
-        flash('Todo Successfully Added!', 'success')
-        return redirect('/')
+        return jsonify({'message': 'Todo Successfully Added!', 'status': 200})
     except ValueError as ex:
         logging.error('%s invalid value passed', ex)
     except Exception as ex:
@@ -50,48 +47,46 @@ def view_update_todo(id):
         logging.error('Todo does not exist')
         return jsonify({'error': 'Todo does not exist'})
     try:
-        form = TodoForm()
-        form.name.data = todo['title']
-        form.description.data = todo['description']
-        form.completed.data = todo['completed']
-        return render_template('add_todo.html', form=form)
+        content = {
+            "id": todo._id,
+            "title": todo.title,
+            "description": todo.description,
+            "completed": todo.completed
+        }
+        return dumps({'data': content, 'status': 200})
     except ValueError as ex:
         logging.error('%s invalid value passed', ex)
     except Exception as ex:
         logging.error('error updating todo')
-        return jsonify({'error': ex.message})
+        return jsonify({'error': ex})
 
 @app.route('/todo/<id>', methods=['POST'])
 def update_todo(id):
+    data = request.get_json()
+    title, description, completed = data.values()
     todo = Todo.get(id)
-    form = TodoForm(request.form)
-    todo_name = form.name.data
-    todo_description = form.description.data
-    todo_completed = form.completed.data
     try:
         todo.update({
-            "title": todo_name,
-            "description": todo_description,
-            "completed": todo_completed
+            "title": title,
+            "description": description,
+            "completed": completed
         })
-        flash('Todo Successfully Updated!', 'success')
-        return redirect('/')
+        return jsonify({"message": 'Todo Successfully Updated!', 'status': 200})
     except ValueError as ex:
         logging.error('%s invalid value passed', ex)
     except Exception as ex:
         logging.error('error creating todo')
         return jsonify({'error': ex.message})
  
-@app.route('/todo/<id>/delete',  methods=['POST'])
+@app.route('/todo/<id>/delete', methods=['POST'])
 def delete_todo(id):
     todo = Todo.get(id)
     if todo is None:
         logging.error('Todo does not exist')
-        return jsonify({'error': 'Todo does not exist'})
+        return jsonify({'error': 'Todo does not exist', 'status': 404})
     try:
         todo.delete()
-        flash('Todo Successfully Deleted!', 'success')
-        return redirect('/')
+        return jsonify({'message': 'Todo Successfully Deleted!', 'status': 200})
     except Exception as ex:
         logging.error('error deleting todo')
         return jsonify({'error': ex.message})
