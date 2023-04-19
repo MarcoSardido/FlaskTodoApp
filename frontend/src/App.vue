@@ -9,9 +9,16 @@
       </button>
     </header>
 
-    <div v-for="todo in todos" :key="todo.id">
-      <Todo :data=todo :getTodo=getTodo :deleteTodo=deleteTodo />
+    <div>
+      <div v-if="todos.length > 0" v-for="todo in todos" :key="todo.id">
+        <Todo :data=todo :getTodo=getTodo :deleteTodo=deleteTodo />
+      </div>
+      <div v-else class="empty-text">
+        <p class="font-monospace text-center">You have no todos... 🎉</p>
+        <p class="font-monospace text-center">Try adding one!</p>
+      </div>
     </div>
+
   </div>
 
   <!-- Add Modal -->

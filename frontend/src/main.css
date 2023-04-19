@@ -4,6 +4,11 @@ header {
     padding: 10px 0;
 }
 
+.empty-text {
+    margin-top: 10rem;
+    font-size: 18px;
+}
+
 .todo .card-header {
     display: flex;
     justify-content: space-between;
