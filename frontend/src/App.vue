@@ -1,9 +1,128 @@
+<script setup>
+import { reactive, ref, toRefs } from 'vue';
+import axios from 'axios'
+import Todo from './components/Todo.vue'
+
+const todoTitle = ref('')
+const todoDescription = ref('')
+const todoStatus = ref(false)
+
+const state = reactive({
+  todos: [],
+  todoContent: {}
+})
+
+const clearInput = () => {
+  todoTitle.value = ''
+  todoDescription.value = ''
+  todoStatus.value = false
+}
+
+// Api
+const path = "http://localhost:4123"
+const getTodoList = async () => {
+  if (state.todos.length > 0) state.todos.length = 0
+  try {
+    const res = await axios.get(path)
+    for (const [index, value] of Object.entries(res.data)) {
+      state.todos.push({
+        id: value._id.$oid,
+        completed: /^true$/i.test(value.completed),
+        title: value.title,
+        description: value.description,
+        date_created: value.date_created,
+      })
+    }
+  } catch (error) {
+    console.error(`Error @getTodoList: ${error.message}`)
+  }
+}
+
+const addTodo = async () => {
+  try {
+    await axios.post(`${path}/todo`, {
+      title: todoTitle.value,
+      description: todoDescription.value,
+      completed: todoStatus.value
+    })
+    clearInput()
+    generateAlert('Success', 'Todo successfully added!', 'success')
+    getTodoList()
+  } catch (error) {
+    generateAlert('Oops...', 'Something went wrong!', 'error')
+    console.error(`Error @addTodo: ${error.message}`)
+  }
+}
+
+const getTodo = async (id) => {
+  try {
+    const res = await axios.get(`${path}/todo/${id}`)
+    for (const [index, value] of Object.entries(res.data.data)) {
+      state.todoContent[index] = value
+    }
+  } catch (error) {
+    console.error(`Error @getTodo: ${error.message}`)
+  }
+}
+
+const updateTodo = async (id) => {
+  try {
+    await axios.post(`${path}/todo/${id}`, {
+      title: state.todoContent.title,
+      description: state.todoContent.description,
+      completed: state.todoContent.completed
+    })
+    generateAlert('Success', 'Todo successfully updated!', 'success')
+    getTodoList()
+  } catch (error) {
+    generateAlert('Oops...', 'Something went wrong!', 'error')
+    console.error(`Error @addTodo: ${error.message}`)
+  }
+}
+
+const deleteTodo = async (id) => {
+  try {
+    const alertStatus = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    })
+    if (alertStatus.isConfirmed) {
+      await axios.post(`${path}/todo/${id}/delete`)
+      generateAlert('Deleted!', 'Todo successfully deleted!', 'success')
+      getTodoList()
+    }
+  } catch (error) {
+    generateAlert('Oops...', 'Something went wrong!', 'error')
+    console.error(`Error @addTodo: ${error.message}`)
+  }
+}
+
+const generateAlert = (title, text, icon) => {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    showConfirmButton: false,
+    timer: 1500
+  })
+}
+
+// Destructure reactive. instead of using 'state.todos'
+const { todos, todoContent } = toRefs(state)
+
+// Render todo list
+getTodoList()
+</script>
+
 <template>
   <div class="container-fluid">
     <header>
       <h4>Todo List</h4>
-
-      <!-- Button trigger modal -->
       <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addTodoModal">
         Add new todo
       </button>
@@ -11,14 +130,13 @@
 
     <div>
       <div v-if="todos.length > 0" v-for="todo in todos" :key="todo.id">
-        <Todo :data=todo :getTodo=getTodo :deleteTodo=deleteTodo />
+        <Todo :data=todo :getTodo=getTodo :deleteTodo=deleteTodo v-bind="42" />
       </div>
       <div v-else class="empty-text">
         <p class="font-monospace text-center">You have no todos... 🎉</p>
         <p class="font-monospace text-center">Try adding one!</p>
       </div>
     </div>
-
   </div>
 
   <!-- Add Modal -->
@@ -95,143 +213,5 @@
     </div>
   </div>
 </template>
-
-<script>
-import { reactive, ref, toRefs } from 'vue';
-import axios from 'axios'
-import Todo from './components/Todo.vue'
-
-export default {
-  components: {
-    Todo
-  },
-  setup() {
-    const todoTitle = ref('')
-    const todoDescription = ref('')
-    const todoStatus = ref(false)
-
-    const state = reactive({
-      todos: [],
-      todoContent: {}
-    })
-
-    const clearInput = () => {
-      todoTitle.value = ''
-      todoDescription.value = ''
-      todoStatus.value = false
-    }
-
-    // Api
-    const path = "http://localhost:4123"
-    const getTodoList = async () => {
-      if (state.todos.length > 0) state.todos.length = 0
-      try {
-        const res = await axios.get(path)
-        for (const [index, value] of Object.entries(res.data)) {
-          state.todos.push({
-            id: value._id.$oid,
-            completed: /^true$/i.test(value.completed),
-            title: value.title,
-            description: value.description,
-            date_created: value.date_created,
-          })
-        }
-      } catch (error) {
-        console.error(`Error @getTodoList: ${error.message}`)
-      }
-    }
-
-    const addTodo = async () => {
-      try {
-        await axios.post(`${path}/todo`, {
-          title: todoTitle.value,
-          description: todoDescription.value,
-          completed: todoStatus.value
-        })
-        clearInput()
-        generateAlert('Success', 'Todo successfully added!', 'success')
-        getTodoList()
-      } catch (error) {
-        generateAlert('Oops...', 'Something went wrong!', 'error')
-        console.error(`Error @addTodo: ${error.message}`)
-      }
-    }
-
-    const getTodo = async (id) => {
-      try {
-        const res = await axios.get(`${path}/todo/${id}`)
-        for (const [index, value] of Object.entries(res.data.data)) {
-          state.todoContent[index] = value
-        }
-      } catch (error) {
-        console.error(`Error @getTodo: ${error.message}`)
-      }
-    }
-
-    const updateTodo = async (id) => {
-      try {
-        await axios.post(`${path}/todo/${id}`, {
-          title: state.todoContent.title,
-          description: state.todoContent.description,
-          completed: state.todoContent.completed
-        })
-        generateAlert('Success', 'Todo successfully updated!', 'success')
-        getTodoList()
-      } catch (error) {
-        generateAlert('Oops...', 'Something went wrong!', 'error')
-        console.error(`Error @addTodo: ${error.message}`)
-      }
-    }
-
-    const deleteTodo = async (id) => {
-      try {
-        const alertStatus = await Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        })
-        if (alertStatus.isConfirmed) {
-          await axios.post(`${path}/todo/${id}/delete`)
-          generateAlert('Deleted!', 'Todo successfully deleted!', 'success')
-          getTodoList()
-        }
-      } catch (error) {
-        generateAlert('Oops...', 'Something went wrong!', 'error')
-        console.error(`Error @addTodo: ${error.message}`)
-      }
-    }
-
-    const generateAlert = (title, text, icon) => {
-      Swal.fire({
-        title: title,
-        text: text,
-        icon: icon,
-        showConfirmButton: false,
-        timer: 1500
-      })
-    }
-
-    // Render todo list
-    getTodoList()
-
-
-    return {
-      todoTitle,
-      todoDescription,
-      todoStatus,
-
-      ...toRefs(state),
-      addTodo,
-      getTodo,
-      updateTodo,
-      deleteTodo
-    };
-  }
-}
-</script>
 
 <style lang="scss" scoped></style>
